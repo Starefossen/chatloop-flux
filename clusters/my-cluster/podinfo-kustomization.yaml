@@ -5,24 +5,16 @@ metadata:
   name: podinfo
   namespace: flux-system
 spec:
-  interval: 1m0s
-  path: ./kustomize
+  interval: 5m
+  targetNamespace: podinfo
+  path: ./clusters/my-cluster/podinfo
   prune: true
-  retryInterval: 2m0s
   sourceRef:
     kind: GitRepository
-    name: podinfo
-  targetNamespace: default
-  timeout: 3m0s
-  wait: true
-  patches:
-    - patch: |-
-        apiVersion: autoscaling/v2
-        kind: HorizontalPodAutoscaler
-        metadata:
-          name: podinfo
-        spec:
-          minReplicas: 3
-      target:
-        name: podinfo
-        kind: HorizontalPodAutoscaler
+    name: flux-system
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: podinfo
+      namespace: podinfo
+  timeout: 1m
